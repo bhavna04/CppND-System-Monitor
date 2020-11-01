@@ -12,7 +12,7 @@ float Processor::Utilization()
     cpuTime.pop_back();
     int guest = std::stoi(cpuTime.back());
     cpuTime.pop_back();
-    int steal = std::stoi(cpuTime.back());
+  //  int steal = std::stoi(cpuTime.back());
     cpuTime.pop_back();
     int softirq = std::stoi(cpuTime.back());
     cpuTime.pop_back();
