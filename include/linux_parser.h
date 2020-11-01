@@ -54,9 +54,14 @@ std::string Ram(int pid);
 std::string Uid(int pid);
 std::string User(int pid);
 long int UpTime(int pid);
+std::vector<float> CpuUtilization(int);
 
 enum ProcessStates {
-  kUpTime = 22 
+  kUTime = 14 ,
+  kSTime = 15,
+  kCUTime = 16,
+  kCSTime = 17,
+  kStartTime = 22 
 };
 
 };  // namespace LinuxParser

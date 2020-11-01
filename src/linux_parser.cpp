@@ -128,7 +128,7 @@ long LinuxParser::IdleJiffies() { return 0; }
 // DONE: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() 
 { 
-  string line;
+  string line;  
   vector<string> cpuTime;
   string cpu,user,nice,system,idle,iowait,irq,softirq,steal,guest,guest_nice;
   std::ifstream stream(kProcDirectory + kStatFilename);
@@ -193,7 +193,7 @@ int LinuxParser::RunningProcesses()
 // DONE: Read and return the command associated with a process
 string LinuxParser::Command(int pid) 
 { 
-  string cmd = "";
+  std::string cmd = "";
   string line;
   std::ifstream stream(kProcDirectory + std::to_string(pid)+ kCmdlineFilename);
   if (stream.is_open()) {
@@ -282,17 +282,39 @@ long int LinuxParser::UpTime(int pid) {
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
       std::istringstream linestream(line);
-      for (i = 1; i <= ProcessStates::kUpTime; i++) {
+      for (i = 1; i <= ProcessStates::kStartTime; i++) {
         linestream >> vals;
-        if (i == ProcessStates::kUpTime) {
-          try {
+        try {
+        if (i == ProcessStates::kStartTime) 
             upTime = std::stol(vals) / sysconf(_SC_CLK_TCK);
           } catch (const std::invalid_argument&) {
             upTime = 0;
           }
         }
-      }
     }
   }
   return upTime;
+}
+
+//DONE : Return Process Utilization of process
+std::vector<float> LinuxParser::CpuUtilization(int pid) {
+  string vals; 
+  string line;
+  std::vector<float> cpuTime;
+  std::ifstream stream(kProcDirectory + std::to_string(pid) + kStatFilename);
+  if (stream.is_open()) {
+    while (std::getline(stream, line)) {
+      std::istringstream linestream(line);
+      for (int i = 1; i <= ProcessStates::kStartTime; i++) {
+        linestream >> vals;
+        try {
+          if (i == ProcessStates::kUTime || i == ProcessStates::kSTime || i == ProcessStates::kCUTime || i == ProcessStates::kCSTime || i == ProcessStates::kStartTime)
+            cpuTime.push_back(std::stol(vals)/sysconf(_SC_CLK_TCK));
+        } catch (const std::invalid_argument&) {
+          cpuTime.push_back(0);
+        }
+      }
+    }
+  }
+  return cpuTime;
 }

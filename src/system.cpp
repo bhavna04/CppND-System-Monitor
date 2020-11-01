@@ -13,7 +13,7 @@ using std::size_t;
 using std::string;
 using std::vector;
 
-// TODO: Return the system's CPU
+// DONE: Return the system's CPU
 Processor& System::Cpu() 
 { 
     return cpu_; 
@@ -28,6 +28,8 @@ vector<Process>& System::Processes()
         Process p(i);
         processes_.push_back(p);
     }
+    
+    sort(processes_.begin(),processes_.end());
     return processes_; 
 }
 
