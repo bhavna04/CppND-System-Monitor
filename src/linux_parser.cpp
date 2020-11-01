@@ -285,12 +285,14 @@ long int LinuxParser::UpTime(int pid) {
       for (i = 1; i <= ProcessStates::kStartTime; i++) {
         linestream >> vals;
         try {
-        if (i == ProcessStates::kStartTime) 
-            upTime = std::stol(vals) / sysconf(_SC_CLK_TCK);
-          } catch (const std::invalid_argument&) {
-            upTime = 0;
+          if (i == ProcessStates::kStartTime) {
+            long int utime = std::stol(vals);
+            upTime = utime / sysconf(_SC_CLK_TCK);
           }
+        } catch (const std::invalid_argument&) {
+          upTime = 0;
         }
+      }
     }
   }
   return upTime;
