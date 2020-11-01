@@ -46,7 +46,7 @@ long int Process::UpTime()
 // DONE: Overload the "less than" comparison operator for Process objects
 bool Process::operator<(Process const& a) const 
 { 
-    return a.cpuUsage < CpuUsage;
+    return a.cpuUsage < cpuUsage;
 }
 
 void Process::GetUser()
