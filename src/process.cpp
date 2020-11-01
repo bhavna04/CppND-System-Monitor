@@ -12,41 +12,48 @@ using std::vector;
 
 Process::Process(int pid) :processID_(pid)
 {
-    getUser();
-    cmd_ = LinuxParser::Command(pid);
+    GetUser();
+    GetCommand();
     memUtilization();
     GetUpTime();
+    GetCpuUtilization();
 }
 
 // DONE: Return this process's ID
 int Process::Pid() { return processID_; }
 
-// TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { return 0; }
+// DONE: Return this process's CPU utilization
+float Process::CpuUtilization() { return cpuUsage; }
 
-// TODO: Return the command that generated this process
+// DONE: Return the command that generated this process
 std::string Process::Command() { return cmd_; }
 
-// TODO: Return this process's memory utilization
+// DONE: Return this process's memory utilization
 std::string Process::Ram() { return mem_; }
 
-// TODO: Return the user (name) that generated this process
+// DONE: Return the user (name) that generated this process
 std::string Process::User() 
 { 
     return user_ ;
 }
 
-// TODO: Return the age of this process (in seconds)
+// DONE: Return the age of this process (in seconds)
 long int Process::UpTime() 
 { 
     return upTime_; 
 }
 
-// TODO: Overload the "less than" comparison operator for Process objects
-// REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+// DONE: Overload the "less than" comparison operator for Process objects
+bool Process::operator<(Process const& a) const 
+{ 
+    if(a.cpuUsage < cpuUsage)
+    return true; 
+    else
+    return false;
+    
+}
 
-void Process::getUser()
+void Process::GetUser()
 {
    user_ = LinuxParser::User(Pid()); 
 }
@@ -62,3 +69,17 @@ void Process::GetUpTime()
 {
     upTime_ = LinuxParser::UpTime(Pid());
 }
+
+void Process::GetCommand()
+{
+    cmd_ = LinuxParser::Command(Pid());
+}
+
+void Process::GetCpuUtilization()
+{
+    vector<float> cpuTime = LinuxParser::CpuUtilization(Pid());
+    float total_time = cpuTime[LinuxParser::kUTime] + cpuTime[LinuxParser::kSTime]+cpuTime[LinuxParser::kCUTime]+cpuTime[LinuxParser::kCSTime];
+    float upTime = LinuxParser::UpTime();
+    float seconds = upTime -cpuTime[LinuxParser::kStartTime];
+    cpuUsage = 100*(total_time/seconds);
+}   
