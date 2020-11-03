@@ -8,7 +8,8 @@ class Processor {
 
   // TODO: Declare any necessary private members
  private:
-
+    unsigned long int prev_idle=0;
+    unsigned long int prev_nonIdle = 0;
 };
 
 #endif
