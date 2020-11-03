@@ -1,41 +1,47 @@
 #include "processor.h"
-#include <vector>
+
 #include <string>
+#include <vector>
 
 using std::string;
 using std::vector;
 // DONE: Return the aggregate CPU utilization
-float Processor::Utilization() 
-{ 
-    vector<string> cpuTime = LinuxParser::CpuUtilization();
-    int guest_nice = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
-    int guest = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
-  //  int steal = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
-    int softirq = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
-    int irq = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
+float Processor::Utilization() {
+  vector<string> cpuTime = LinuxParser::CpuUtilization();
+  unsigned long int guest_nice = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
+  unsigned long int guest = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
+  unsigned long int steal = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
+  unsigned long int softirq = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
+  unsigned long int irq = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
 
-    int iowait = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
-    int idle = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
-    int system = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
-    int nice = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
-    int user = std::stoi(cpuTime.back());
-    cpuTime.pop_back();
+  int iowait = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
+  int idle = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
+  unsigned long int system = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
+  unsigned long int nice = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
+  unsigned long int user = std::stoul(cpuTime.back());
+  cpuTime.pop_back();
 
-    user = user - guest;
-    idle = idle + iowait;
-    int systemAllTime = system+irq+softirq;
-    int virtAllTime = guest+guest_nice;
-    int totalTime = user + nice + idle + systemAllTime+ virtAllTime;
+  unsigned long idle_ = idle + iowait;
 
-    float cpuUtilization = (totalTime - idle)/totalTime;
-    return cpuUtilization;
+  unsigned long int nonIdle =
+      user + nice + steal + system + softirq + irq + guest + guest_nice;
+  unsigned long int totalTime = idle_ + nonIdle;
+  unsigned long int PrevTotal = prev_nonIdle + prev_idle;
+
+  unsigned long int delta_total = totalTime - PrevTotal;
+  unsigned long int delta_idle = idle_ - prev_nonIdle;
+
+  float cpuUtilization = (float)(delta_total - delta_idle) / delta_total;
+  prev_nonIdle = nonIdle;
+  prev_idle = idle_;
+  return cpuUtilization;
 }

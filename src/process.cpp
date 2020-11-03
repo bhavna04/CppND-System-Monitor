@@ -73,9 +73,11 @@ void Process::GetCommand()
 
 void Process::GetCpuUtilization()
 {
-    vector<float> cpuTime = LinuxParser::CpuUtilization(Pid());
-    float total_time = cpuTime[LinuxParser::kUTime] + cpuTime[LinuxParser::kSTime]+cpuTime[LinuxParser::kCUTime]+cpuTime[LinuxParser::kCSTime];
-    float upTime = LinuxParser::UpTime();
-    float seconds = upTime -cpuTime[LinuxParser::kStartTime];
-    cpuUsage = 100*(total_time/seconds);
+    float totaltime = LinuxParser::ActiveJiffies(Pid());  // In jiffies
+  float uptime = LinuxParser::UpTime();                 // In seconds
+  float secondsactive =
+      uptime - (Process::UpTime() / sysconf(_SC_CLK_TCK));  // In seconds
+  cpuUsage =
+      (totaltime / sysconf(_SC_CLK_TCK)) / secondsactive;  // In seconds
+    
 }   
