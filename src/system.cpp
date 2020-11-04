@@ -23,6 +23,7 @@ Processor& System::Cpu()
 vector<Process>& System::Processes() 
 { 
     vector<int> process_IDs = LinuxParser::Pids();
+    processes_.clear();
     for(int i: process_IDs)
     {
         Process p(i);
