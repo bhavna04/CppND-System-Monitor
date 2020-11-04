@@ -38,7 +38,7 @@ float Processor::Utilization() {
   unsigned long int PrevTotal = prev_nonIdle + prev_idle;
 
   unsigned long int delta_total = totalTime - PrevTotal;
-  unsigned long int delta_idle = idle_ - prev_nonIdle;
+  unsigned long int delta_idle = idle_ - prev_idle;
 
   float cpuUtilization = (float)(delta_total - delta_idle) / delta_total;
   prev_nonIdle = nonIdle;
