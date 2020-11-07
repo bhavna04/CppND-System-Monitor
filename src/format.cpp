@@ -9,23 +9,35 @@ using std::string;
 // OUTPUT: HH:MM:SS
 string Format::ElapsedTime(long seconds) 
 { 
-    string time = "";
+    string time = "00:00:00";
     long t=0;
     if(seconds > 0)
     {
         t = seconds/3600;
-        if(t<10)
-            time += "0"; 
-        time += std::to_string(t) + ":";
+        
+        time = StringToTime(t);
+        time += ":";
+        
         t = (seconds/60) % 60;
-        if(t<10)
-        time+= "0";
-        time += std::to_string(t)+":";
+        time += StringToTime(t);
+        time += ":";
+        
+
         t = seconds % 60;
-        if(t<10)
-        time +="0";
-        time += std::to_string(t);
+        time += StringToTime(t);
     }
     
     return time; 
+}
+
+string Format::StringToTime(long time)
+{
+    string str = "";
+    if(time < 10)
+    {
+        str+="0";
+    }
+    
+    str += std::to_string(time);
+    return str;
 }
