@@ -30,7 +30,9 @@ vector<Process>& System::Processes()
         processes_.push_back(p);
     }
     
-    sort(processes_.begin(),processes_.end());
+    sort(processes_.begin(),processes_.end(),[](const Process& a, const Process& b){
+        return a.CpuUtilization() > b.CpuUtilization();
+    });
     return processes_; 
 }
 
