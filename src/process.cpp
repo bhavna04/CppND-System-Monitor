@@ -20,25 +20,25 @@ Process::Process(int pid) :processID_(pid)
 }
 
 // DONE: Return this process's ID
-int Process::Pid() { return processID_; }
+int Process::Pid() const { return processID_; }
 
 // DONE: Return this process's CPU utilization
-float Process::CpuUtilization() { return cpuUsage; }
+float Process::CpuUtilization() const { return cpuUsage; }
 
 // DONE: Return the command that generated this process
-std::string Process::Command() { return cmd_; }
+std::string Process::Command() const { return cmd_; }
 
 // DONE: Return this process's memory utilization
-std::string Process::Ram() { return mem_; }
+std::string Process::Ram() const { return mem_; }
 
 // DONE: Return the user (name) that generated this process
-std::string Process::User() 
+std::string Process::User() const
 { 
     return user_ ;
 }
 
 // DONE: Return the age of this process (in seconds)
-long int Process::UpTime() 
+long int Process::UpTime() const
 { 
     return upTime_; 
 }
@@ -56,9 +56,7 @@ void Process::GetUser()
 
 void Process::memUtilization()
 {
-    std::string ram;
-    ram = LinuxParser::Ram(Pid());
-    mem_ = (std::to_string(std::stof(ram) * 0.001));
+    mem_ = LinuxParser::Ram(Pid());
 }
 
 void Process::GetUpTime()
@@ -73,11 +71,5 @@ void Process::GetCommand()
 
 void Process::GetCpuUtilization()
 {
-    float totaltime = LinuxParser::ActiveJiffies(Pid());  // In jiffies
-  float uptime = LinuxParser::UpTime();                 // In seconds
-  float secondsactive =
-      uptime - (Process::UpTime() / sysconf(_SC_CLK_TCK));  // In seconds
-  cpuUsage =
-      (totaltime / sysconf(_SC_CLK_TCK)) / secondsactive;  // In seconds
-    
+    cpuUsage = LinuxParser::ProcessCpuUtilization(Pid(),UpTime());
 }   

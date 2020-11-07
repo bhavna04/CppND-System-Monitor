@@ -241,7 +241,7 @@ string LinuxParser::Ram(int pid) {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
         if (key == "VmSize") {
-          return value;
+          return (std::to_string(std::stof(value) * 0.001));
         }
       }
     }
@@ -318,3 +318,16 @@ long int LinuxParser::UpTime(int pid) {
   }
   return upTime;
 }
+float LinuxParser::ProcessCpuUtilization(int pid, long upTime)
+{
+    float cpuUsage=0;
+    float totaltime = LinuxParser::ActiveJiffies(pid);  // In jiffies
+  float uptime = LinuxParser::UpTime();                 // In seconds
+  float secondsactive =
+      uptime - (upTime / sysconf(_SC_CLK_TCK));  // In seconds
+  cpuUsage =
+      (totaltime / sysconf(_SC_CLK_TCK)) / secondsactive;  // In seconds
+
+      return cpuUsage;
+    
+}   
